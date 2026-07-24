@@ -1,4 +1,4 @@
-# Gmail AI Assistant with n8n
+<h1 align="center">Gmail AI Assistant with n8n</h1>
 
 An AI-powered email assistant built with **n8n**, **OpenRouter**, **Gmail**, and **Telegram**.
 
