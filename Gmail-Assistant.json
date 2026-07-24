@@ -1,0 +1,184 @@
+{
+  "name": "Gmail-Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -192,
+        0
+      ],
+      "id": "4df4d43c-73b5-481b-bdf1-4899c29b7746",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "i3iifOkzbJQMrVph",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this email.\n\nSender:\n{{$json.sender}}\n\nSubject:\n{{$json.subject}}\n\nContent:\n{{$json.email}}\n\nReturn:\n1. Summary\n2. Priority\n3. Suggested reply",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c32e7b7d-6a02-40e9-be19-de92caf2279b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openrouter/free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        208,
+        208
+      ],
+      "id": "f8a5c24b-d92d-4bd9-8ea6-21552a790ded",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "E0yHDKIqpx7icgtt",
+          "name": "OPENROUTER_API_KEY"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "87489239-9a46-4cde-b1c3-5ac121049bd9",
+              "name": "sender",
+              "value": "={{$json[\"From\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "e33b6150-ecdc-4374-b5dd-161975b6aa54",
+              "name": "subject",
+              "value": "={{$json[\"Subject\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "6b052a2b-62db-42be-b966-12f3006943de",
+              "name": "email",
+              "value": "={{$json[\"snippet\"]}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "3775f5e7-79b2-4a49-b56f-3fbfb78c77bf",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "2074690250",
+        "text": "=From:\n{{ $('Gmail Trigger').item.json.From }}\n\nSubject:\n{{ $('Gmail Trigger').item.json.Subject }}\n\n🤖 AI Analysis:\n\n{{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "cc95e87d-b2ef-4ffe-8c7f-50e6ff6382e1",
+      "name": "Send a text message",
+      "webhookId": "50d5080f-2d51-47ae-a43b-069b744b9b35",
+      "credentials": {
+        "telegramApi": {
+          "id": "cVbo5ebrcXUVMzXc",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "6110a551-cd11-4611-a267-dd0c4307cb90",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4c59995d5d97ab75f001c2d6f1fa8c1d4047e946fa14edb18f365b7cf2706e61"
+  },
+  "nodeGroups": [],
+  "id": "OzQkM9nCF9gsDMnG",
+  "tags": []
+}
