@@ -7,7 +7,7 @@ The workflow automatically monitors incoming Gmail messages, analyzes them using
 ## Demo
 
 <p align="center">
-  <img src="assets/workflow.gif" alt="Workflow Demo" width="800">
+  <img src="assets/workflow.gif" alt="Workflow Demo" width="300">
 </p>
 
 ## Features
