@@ -12,26 +12,23 @@ The workflow automatically monitors incoming Gmail messages, analyzes them using
 
 ## Features
 
-- Monitors incoming Gmail messages automatically
-- Uses an LLM through OpenRouter to analyze emails
-- Generates:
-  - Email summary
-  - Priority assessment
-  - Suggested reply
-- Sends the analysis to a Telegram bot
-- Fully automated using n8n
+- Automatically monitor incoming Gmail messages.
+- Retrieve the complete email body for accurate analysis.
+- Generate AI-powered summaries and identify key information.
+- Classify email priority and detect spam.
+- Deliver structured email insights directly to Telegram.
 
 ## Workflow
 
-1. Gmail Trigger Detects new incoming emails 
+1. Gmail Trigger detects a new email.
 
-2. Edit Fields Extracts sender, subject, and email content 
+2. Gmail API fetches the complete email.
 
-3. AI Agent Analyzes the email and generates a structured response 
+3. Email content is cleaned and extracted.
 
-4. OpenRouter LLM Provides the language model inference 
+4. AI Agent analyzes the email.
 
-5. Telegram Bot Sends the AI-generated summary, priority, and suggested reply
+5. Telegram receives the analysis.
 
 ## Technologies
 
@@ -40,19 +37,6 @@ The workflow automatically monitors incoming Gmail messages, analyzes them using
 - OpenRouter
 - Large Language Models (LLMs)
 - Telegram Bot API
-
-
-## How It Works
-
-1. A new email arrives in Gmail.
-2. The Gmail Trigger detects the new message.
-3. Relevant fields (sender, subject, and email content) are extracted.
-4. The AI Agent analyzes the email using an OpenRouter language model.
-5. The AI generates:
-   - A concise summary
-   - A priority level
-   - A suggested reply
-6. The analysis is delivered to the configured Telegram chat.
 
 
 ## AI Prompt
@@ -122,13 +106,26 @@ git clone https://github.com/<your-username>/gmail-ai-assistant.git
 
 ## Future Improvements
 
-- [ ] Read the full email body instead of using the Gmail snippet.
-- [ ] Improve email content extraction and generate better summaries from Gmail data.
+- [x] Read the full email body instead of using the Gmail snippet.
+- [ ] Improve HTML parsing and email content cleaning.
 - [ ] Support one-click AI-generated replies directly from Telegram.
 - [ ] Classify emails into categories (work, personal, promotions, etc.).
 - [ ] Add calendar event creation for meeting requests.
 - [ ] Use a paid LLM API to improve response quality and reliability.
 - [ ] Add memory to maintain context from previous email conversations.
+
+
+## Changelog
+
+### v0.2.0
+- Read the full Gmail email body instead of using only the snippet.
+- Improved email content extraction and cleaning.
+- Enhanced AI prompt for more structured email analysis.
+
+### v0.1.0
+- Gmail Trigger integration.
+- AI email analysis.
+- Telegram notifications.
 
 
 ## License
