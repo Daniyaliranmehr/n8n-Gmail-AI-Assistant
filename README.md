@@ -1,6 +1,6 @@
 <h1 align="center">Gmail AI Assistant with n8n</h1>
 
-An AI-powered email assistant built with **n8n**, **OpenRouter**, **Gmail**, and **Telegram**.
+An AI-powered email assistant built with **n8n**.
 
 The workflow automatically monitors incoming Gmail messages, analyzes them using a Large Language Model (LLM), and sends an AI-generated summary, priority assessment, and suggested reply directly to Telegram.
 
