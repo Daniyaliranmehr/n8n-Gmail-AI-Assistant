@@ -15,8 +15,8 @@
       "type": "n8n-nodes-base.gmailTrigger",
       "typeVersion": 1.4,
       "position": [
-        -192,
-        0
+        -560,
+        -208
       ],
       "id": "4df4d43c-73b5-481b-bdf1-4899c29b7746",
       "name": "Gmail Trigger",
@@ -30,14 +30,14 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Analyze this email.\n\nSender:\n{{$json.sender}}\n\nSubject:\n{{$json.subject}}\n\nContent:\n{{$json.email}}\n\nReturn:\n1. Summary\n2. Priority\n3. Suggested reply",
+        "text": "=You are an intelligent email assistant.\n\nAnalyze the following email carefully.\n\nSender:\n{{$json.sender}}\n\nSubject:\n{{$json.subject}}\n\nEmail Body:\n{{$json.email}}\n\nYour task is to return a structured analysis in Markdown using exactly the following format.\n\n## Summary\nWrite a concise summary (2–4 sentences) describing the purpose of the email.\n\n## Priority\nChoose exactly one:\n- High\n- Medium\n- Low\n\nThen explain in one sentence why you assigned this priority.\n\n## Suggested Action\nRecommend the single best next action for the user.\n\nExamples:\n- Reply immediately\n- Read later\n- Ignore\n- Archive\n- Register for the event\n- Download the attachment\n- Schedule the meeting\n\n## Key Information\nExtract any important information mentioned in the email, such as:\n- Dates\n- Times\n- Deadlines\n- Meeting links\n- Names\n- Companies\n- Locations\n- Prices\n- Discount codes\n- Order numbers\n- Tracking numbers\n- URLs\n- Attachments mentioned\n\nOnly include items that actually exist in the email.\n\n## Spam Assessment\nState whether this appears to be:\n- Legitimate\n- Promotional\n- Newsletter\n- Spam\n- Phishing Suspected\n\nBriefly explain your reasoning.\n\nRules:\n- Do not invent information.\n- If a section has no relevant information, write \"None\".\n- Keep the response concise and easy to read.\n- Base your analysis only on the provided email.",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        208,
-        0
+        -512,
+        -16
       ],
       "id": "c32e7b7d-6a02-40e9-be19-de92caf2279b",
       "name": "AI Agent"
@@ -50,7 +50,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
       "typeVersion": 1,
       "position": [
-        208,
+        -464,
         208
       ],
       "id": "f8a5c24b-d92d-4bd9-8ea6-21552a790ded",
@@ -69,19 +69,19 @@
             {
               "id": "87489239-9a46-4cde-b1c3-5ac121049bd9",
               "name": "sender",
-              "value": "={{$json[\"From\"]}}",
+              "value": "={{ $json.sender }}",
               "type": "string"
             },
             {
               "id": "e33b6150-ecdc-4374-b5dd-161975b6aa54",
               "name": "subject",
-              "value": "={{$json[\"Subject\"]}}",
+              "value": "={{$json[\"subject\"]}}",
               "type": "string"
             },
             {
               "id": "6b052a2b-62db-42be-b966-12f3006943de",
               "name": "email",
-              "value": "={{$json[\"snippet\"]}}",
+              "value": "={{ $json.email }}",
               "type": "string"
             }
           ]
@@ -91,8 +91,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -16,
-        0
+        112,
+        -240
       ],
       "id": "3775f5e7-79b2-4a49-b56f-3fbfb78c77bf",
       "name": "Edit Fields"
@@ -106,8 +106,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        560,
-        0
+        48,
+        32
       ],
       "id": "cc95e87d-b2ef-4ffe-8c7f-50e6ff6382e1",
       "name": "Send a text message",
@@ -118,6 +118,41 @@
           "name": "Telegram account"
         }
       }
+    },
+    {
+      "parameters": {
+        "url": "=https://gmail.googleapis.com/gmail/v1/users/me/messages/{{$json.id}}?format=full",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -336,
+        -240
+      ],
+      "id": "d35e0bf4-1a05-4aa0-a7e8-bcfbb7669f3b",
+      "name": "HTTP Request",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "i3iifOkzbJQMrVph",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const parts = $json.payload.parts || [];\n\nfunction decodeBase64(data) {\n  data = data.replace(/-/g, \"+\").replace(/_/g, \"/\");\n  return Buffer.from(data, \"base64\").toString(\"utf-8\");\n}\n\nfunction cleanText(text) {\n  return text\n    // Remove CSS and scripts\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, \"\")\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, \"\")\n\n    // Remove HTML tags\n    .replace(/<[^>]*>/g, \" \")\n\n    // Remove invisible characters\n    .replace(/[\\u200B-\\u200F\\u2060\\uFEFF\\u00AD]/g, \"\")\n\n    // Replace common HTML entities\n    .replace(/&nbsp;/g, \" \")\n    .replace(/&amp;/g, \"&\")\n    .replace(/&lt;/g, \"<\")\n    .replace(/&gt;/g, \">\")\n\n    // Remove extra spaces\n    .replace(/\\s+/g, \" \")\n\n    .replace(/\\s{2,}/g, \" \")\n    .trim();\n}\n\nfunction isGoodEmail(text) {\n  const badPatterns = [\n    \"body, table, td\",\n    \"font-family\"\n  ];\n\n  return (\n    text.length > 100 &&\n    !badPatterns.some(pattern => text.includes(pattern))\n  );\n}\n\n\n// Find email parts\nconst plainPart = parts.find(\n  part => part.mimeType === \"text/plain\"\n);\n\nconst htmlPart = parts.find(\n  part => part.mimeType === \"text/html\"\n);\n\n\nlet email = \"\";\n\n\n// Some emails don't have parts\nif (!parts.length && $json.payload.body?.data) {\n  email = cleanText(\n    decodeBase64($json.payload.body.data)\n  );\n}\n\n// 1. Try plain text first\nif (plainPart?.body?.data) {\n  email = cleanText(\n    decodeBase64(plainPart.body.data)\n  );\n}\n\n\n// 2. If plain text is bad, use HTML\nif (!isGoodEmail(email) && htmlPart?.body?.data) {\n  email = cleanText(\n    decodeBase64(htmlPart.body.data)\n  );\n}\n\n\nconst headers = $json.payload.headers || [];\n\nconst from = headers.find(h => h.name === \"From\")?.value || \"\";\nconst subject = headers.find(h => h.name === \"Subject\")?.value || \"\";\n\nreturn [{\n  json: {\n    sender: from,\n    subject: subject,\n    email: email\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        -208
+      ],
+      "id": "3ee88d15-cb00-444e-954f-8d779faacfa9",
+      "name": "Code in JavaScript"
     }
   ],
   "pinData": {},
@@ -126,7 +161,7 @@
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "HTTP Request",
             "type": "main",
             "index": 0
           }
@@ -165,6 +200,28 @@
           }
         ]
       ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -173,7 +230,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "6110a551-cd11-4611-a267-dd0c4307cb90",
+  "versionId": "b9ea1ff8-3141-491f-98b1-0b835920b237",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "4c59995d5d97ab75f001c2d6f1fa8c1d4047e946fa14edb18f365b7cf2706e61"
