@@ -1,4 +1,4 @@
-<h1 align="center">Gmail AI Assistant with n8n</h1>
+<h1 align="center">n8n Gmail AI Assistant</h1>
 
 An AI-powered email assistant built with **n8n**.
 
