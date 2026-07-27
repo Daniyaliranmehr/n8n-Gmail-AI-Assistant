@@ -15,7 +15,7 @@
       "type": "n8n-nodes-base.gmailTrigger",
       "typeVersion": 1.4,
       "position": [
-        -560,
+        -688,
         -208
       ],
       "id": "4df4d43c-73b5-481b-bdf1-4899c29b7746",
@@ -36,7 +36,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        -512,
+        -656,
         -16
       ],
       "id": "c32e7b7d-6a02-40e9-be19-de92caf2279b",
@@ -50,8 +50,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
       "typeVersion": 1,
       "position": [
-        -464,
-        208
+        -624,
+        176
       ],
       "id": "f8a5c24b-d92d-4bd9-8ea6-21552a790ded",
       "name": "OpenRouter Chat Model",
@@ -92,7 +92,7 @@
       "typeVersion": 3.4,
       "position": [
         112,
-        -240
+        -224
       ],
       "id": "3775f5e7-79b2-4a49-b56f-3fbfb78c77bf",
       "name": "Edit Fields"
@@ -106,8 +106,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        48,
-        32
+        32,
+        64
       ],
       "id": "cc95e87d-b2ef-4ffe-8c7f-50e6ff6382e1",
       "name": "Send a text message",
@@ -129,7 +129,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -336,
+        -480,
         -240
       ],
       "id": "d35e0bf4-1a05-4aa0-a7e8-bcfbb7669f3b",
@@ -148,11 +148,24 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -112,
+        -288,
         -208
       ],
       "id": "3ee88d15-cb00-444e-954f-8d779faacfa9",
       "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "let email = $json.email;\n\n// Remove everything after common footer markers\nconst footerMarkers = [\n  \"unsubscribe\",\n  \"privacy policy\",\n  \"privacy notice\",\n  \"terms of service\",\n  \"terms apply\",\n  \"view in browser\",\n  \"manage preferences\",\n  \"all rights reserved\",\n  \"copyright\",\n  \"©\",\n  \"help center\"\n];\n\nconst lower = email.toLowerCase();\n\nlet cutIndex = email.length;\n\nfor (const marker of footerMarkers) {\n  const index = lower.indexOf(marker);\n  if (index !== -1 && index < cutIndex) {\n    cutIndex = index;\n  }\n}\n\nemail = email.substring(0, cutIndex);\n\n// Remove repeated whitespace\nemail = email\n  .replace(/\\n\\s*\\n/g, \"\\n\")\n  .replace(/\\s+/g, \" \")\n  .trim();\n\nreturn [{\n  json: {\n    ...$json,\n    email\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -240
+      ],
+      "id": "280ad8f5-f60a-4703-9573-f3e86c40041b",
+      "name": "Advanced Email Cleaning"
     }
   ],
   "pinData": {},
@@ -216,6 +229,17 @@
       "main": [
         [
           {
+            "node": "Advanced Email Cleaning",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Advanced Email Cleaning": {
+      "main": [
+        [
+          {
             "node": "Edit Fields",
             "type": "main",
             "index": 0
@@ -230,7 +254,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "b9ea1ff8-3141-491f-98b1-0b835920b237",
+  "versionId": "56ed67a7-0ae5-45c7-8635-8c59a85ae758",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "4c59995d5d97ab75f001c2d6f1fa8c1d4047e946fa14edb18f365b7cf2706e61"
