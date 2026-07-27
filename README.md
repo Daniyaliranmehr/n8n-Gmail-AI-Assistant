@@ -13,67 +13,32 @@ The workflow automatically monitors incoming Gmail messages, analyzes them using
 ## Features
 
 - Automatically monitor incoming Gmail messages.
-- Retrieve the complete email body for accurate analysis.
-- Generate AI-powered summaries and identify key information.
-- Classify email priority and detect spam.
+- Retrieve and clean full email content for accurate AI analysis.
+- Generate AI-powered summaries and extract key information.
+- Classify email priority and assess spam likelihood.
 - Deliver structured email insights directly to Telegram.
 
 ## Workflow
 
-1. Gmail Trigger detects a new email.
+1. Gmail Trigger detects a new incoming email.
 
-2. Gmail API fetches the complete email.
+2. Gmail API retrieves the complete email content.
 
-3. Email content is cleaned and extracted.
+3. JavaScript processing extracts and cleans the email body.
 
-4. AI Agent analyzes the email.
+4. AI Agent analyzes the cleaned email and generates structured insights.
 
-5. Telegram receives the analysis.
+5. Telegram delivers the AI-generated analysis to the user.
 
 ## Technologies
 
 - n8n
-- Gmail Trigger
+- Gmail API
 - OpenRouter
 - Large Language Models (LLMs)
 - Telegram Bot API
+- JavaScript
 
-
-## AI Prompt
-
-The workflow instructs the model to analyze each email and return:
-
-```text
-1. Summary
-2. Priority
-3. Suggested reply
-```
-
-This makes the assistant useful for quickly triaging incoming emails without opening Gmail.
-
-
-## Example Output
-
-```text
-From:
-Daniyal Iran Mehr
-
-Subject:
-Project Meeting
-
-🤖 AI Analysis
-
-Summary:
-Daniyal requests moving tomorrow's meeting to 3 PM.
-
-Priority:
-Medium
-
-Suggested Reply:
-Hi Daniyal,
-3 PM works well for me. Thanks for letting me know.
-Looking forward to our meeting.
-```
 
 ## Setup
 
@@ -107,7 +72,7 @@ git clone https://github.com/<your-username>/gmail-ai-assistant.git
 ## Future Improvements
 
 - [x] Read the full email body instead of using the Gmail snippet.
-- [ ] Improve HTML parsing and email content cleaning.
+- [x] Improve HTML parsing and email content cleaning.
 - [ ] Support one-click AI-generated replies directly from Telegram.
 - [ ] Classify emails into categories (work, personal, promotions, etc.).
 - [ ] Add calendar event creation for meeting requests.
@@ -116,6 +81,10 @@ git clone https://github.com/<your-username>/gmail-ai-assistant.git
 
 
 ## Changelog
+
+### v0.3.0
+- Added email content cleaning to remove unnecessary footer sections and promotional boilerplate.
+- Improved AI analysis quality by providing cleaner email content.
 
 ### v0.2.0
 - Read the full Gmail email body instead of using only the snippet.
